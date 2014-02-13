@@ -1,14 +1,15 @@
-var packer = require('./packer.js');
-var installer = require('./installer.js');
+'use strict';
+var NpmStrategy = require('./lib/npm/strategy');
 
+var isProduction = process.env.NODE_ENV === 'production';
 
-var isProduction = process.env.NODE_ENV === 'production' || process.argv.indexOf('--production') > -1;
+var npmStrategy = new NpmStrategy({
+	isProduction: isProduction
+});
 
-// naive
 if (~process.argv.indexOf('install')) {
-  installer(isProduction);
+	npmStrategy.install();
 } else {
-  var arg = process.argv[0] == 'node' ? process.argv[2] : process.argv[1];
-  packer(arg, isProduction);
+	var arg = process.argv[0] === 'node' ? process.argv[2] : process.argv[1];
+	npmStrategy.pack(arg);
 }
-
